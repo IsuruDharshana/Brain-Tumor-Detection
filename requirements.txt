@@ -1,0 +1,29 @@
+# ──────────────────────────────────────────────────────────
+# Brain Tumor MRI Classification — Phase 1 dependencies
+# ──────────────────────────────────────────────────────────
+# Install:  pip install -r requirements.txt
+
+# Deep learning (CPU-only build; GPU wheels added on the
+# training workstation separately)
+tensorflow==2.17.*
+
+# Numerical / data
+numpy==1.26.*
+pandas==2.2.*
+
+# Image processing
+Pillow==10.4.*
+opencv-python==4.10.*
+
+# Machine-learning utilities
+scikit-learn==1.5.*
+
+# Visualisation
+matplotlib==3.9.*
+seaborn==0.13.*
+
+# Experiment notebooks
+jupyter==1.1.*
+
+# Web UI (Streamlit app — Phase 3+)
+streamlit==1.38.*

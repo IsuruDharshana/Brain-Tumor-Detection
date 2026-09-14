@@ -1,0 +1,126 @@
+# ──────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.pyo
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ──────────────────────────────────────────────
+# Virtual Environments
+# ──────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env/
+virtualenv/
+
+# ──────────────────────────────────────────────
+# IDE / Editor
+# ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.code-workspace
+
+# ──────────────────────────────────────────────
+# Jupyter / IPython
+# ──────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ──────────────────────────────────────────────
+# Caches
+# ──────────────────────────────────────────────
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# ──────────────────────────────────────────────
+# Datasets  (keep folder structure, ignore data)
+# ──────────────────────────────────────────────
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.h5
+*.hdf5
+
+# ──────────────────────────────────────────────
+# Trained model files
+# ──────────────────────────────────────────────
+models/*
+!models/.gitkeep
+*.keras
+*.pb
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+*.weights
+
+# ──────────────────────────────────────────────
+# Results / outputs  (keep folder, ignore files)
+# ──────────────────────────────────────────────
+results/*
+!results/.gitkeep
+
+# ──────────────────────────────────────────────
+# Temporary files
+# ──────────────────────────────────────────────
+*.tmp
+*.temp
+*.log
+*.bak
+*.orig
+tmp/
+temp/
+
+# ──────────────────────────────────────────────
+# Secrets / environment variables
+# ──────────────────────────────────────────────
+.env
+.env.*
+*.pem
+*.key
+secrets.yaml
+secrets.json
+config/local*.yaml
+
+# ──────────────────────────────────────────────
+# OS artefacts
+# ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
