@@ -1,0 +1,9 @@
+split,class,image_count,percentage,percentage_of_total
+Training,glioma,1400,25.0,19.44
+Training,meningioma,1400,25.0,19.44
+Training,notumor,1400,25.0,19.44
+Training,pituitary,1400,25.0,19.44
+Testing,glioma,400,25.0,5.56
+Testing,meningioma,400,25.0,5.56
+Testing,notumor,400,25.0,5.56
+Testing,pituitary,400,25.0,5.56
