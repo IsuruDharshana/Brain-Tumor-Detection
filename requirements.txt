@@ -18,6 +18,15 @@ opencv-python==4.10.*
 # Machine-learning utilities
 scikit-learn==1.5.*
 
+# Dataset acquisition (Phase 2 — Kaggle CLI)
+kaggle==2.2.*
+
+# Dataset audit / optional perceptual duplicate hashing (Phase 2)
+imagehash==4.3.*
+
+# Testing
+pytest==9.1.*
+
 # Visualisation
 matplotlib==3.9.*
 seaborn==0.13.*

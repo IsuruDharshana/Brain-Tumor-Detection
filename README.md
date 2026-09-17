@@ -98,10 +98,72 @@ appropriate CUDA-enabled TensorFlow build.
 
 ---
 
+## Dataset
+
+The project uses the public **Brain Tumor MRI Dataset**:
+
+| | |
+|---|---|
+| Kaggle identifier | `masoudnickparvar/brain-tumor-mri-dataset` |
+| Classes | `glioma`, `meningioma`, `notumor`, `pituitary` |
+| Splits | `Training/` and `Testing/` |
+| License | CC BY 4.0 (as listed on Kaggle) |
+
+The dataset was **not collected by this project** and does not represent all
+real-world MRI populations; it is used for educational/research purposes
+only. Raw data is intentionally **excluded from Git** — every developer must
+download it themselves, and the audit scripts reproduce the validation
+process.
+
+### Downloading the dataset (reproducible)
+
+A Kaggle account (and, depending on your account settings, an API token) may
+be required. If the CLI asks for authentication, run `kaggle auth login` or
+place a token in `~/.kaggle/access_token`. **Never commit Kaggle
+credentials.**
+
+```powershell
+python -m pip install kaggle
+kaggle datasets download -d masoudnickparvar/brain-tumor-mri-dataset -p data/raw
+```
+
+Extract the archive into `data/raw` so the layout becomes
+`data/raw/Training/<class>/*.jpg` and `data/raw/Testing/<class>/*.jpg`:
+
+```powershell
+python -m zipfile -e data/raw/brain-tumor-mri-dataset.zip data/raw/
+Remove-Item data/raw/brain-tumor-mri-dataset.zip  # only after a successful extraction
+```
+
+### Dataset audit (Phase 2)
+
+The audit is **read-only** — it never modifies, renames or deletes anything
+inside `data/raw`. Run it from the repository root:
+
+```powershell
+python -m src.data.audit_dataset
+```
+
+It validates the directory structure, image integrity, dimensions, colour
+modes, exact SHA-256 duplicates, cross-split (Train/Test) leakage and
+optionally perceptual (pHash) near-duplicates, then writes a report and
+machine-readable summaries to `results/dataset_audit/`
+(`audit_report.md`, `dataset_summary.json`, CSV tables and PNG charts).
+
+Notes:
+
+- `--data-dir` / `--output-dir` override the default paths
+  (`data/raw`, `results/dataset_audit`).
+- `--skip-perceptual` skips the optional pHash near-duplicate stage.
+- The large per-file table `image_metadata.csv` is generated locally and is
+  intentionally kept out of Git.
+
+---
+
 ## Running Tests
 
 ```powershell
-pytest tests/
+python -m pytest
 ```
 
 ---

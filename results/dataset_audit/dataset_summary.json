@@ -1,0 +1,253 @@
+{
+  "generated_at_utc": "2026-09-17T16:20:59Z",
+  "audit_script": "src/data/audit_dataset.py",
+  "dataset": {
+    "name": "Brain Tumor MRI Dataset",
+    "kaggle_id": "masoudnickparvar/brain-tumor-mri-dataset",
+    "dataset_root": "data/raw",
+    "expected_splits": [
+      "Training",
+      "Testing"
+    ],
+    "expected_classes": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ],
+    "detected_splits": [
+      "Training",
+      "Testing"
+    ],
+    "detected_classes": [
+      "glioma",
+      "meningioma",
+      "notumor",
+      "pituitary"
+    ]
+  },
+  "structure_issues": {
+    "missing_splits": [],
+    "missing_classes": {},
+    "unexpected_class_dirs": [],
+    "unexpected_files_in_split_dirs": [],
+    "unexpected_root_files": [],
+    "nested_dirs_in_class_dirs": [],
+    "non_image_files": []
+  },
+  "counts": {
+    "total_files_scanned": 7200,
+    "total_images": 7200,
+    "valid_images": 7200,
+    "invalid_images": 0,
+    "non_image_files": 0,
+    "per_split": {
+      "Training": 5600,
+      "Testing": 1600
+    },
+    "per_split_class": {
+      "Training": {
+        "glioma": 1400,
+        "meningioma": 1400,
+        "notumor": 1400,
+        "pituitary": 1400
+      },
+      "Testing": {
+        "glioma": 400,
+        "meningioma": 400,
+        "notumor": 400,
+        "pituitary": 400
+      }
+    },
+    "per_class": {
+      "glioma": 1800,
+      "meningioma": 1800,
+      "notumor": 1800,
+      "pituitary": 1800
+    },
+    "valid_per_class": {
+      "glioma": 1800,
+      "meningioma": 1800,
+      "notumor": 1800,
+      "pituitary": 1800
+    },
+    "total_size_bytes": 167848957,
+    "total_size_mb": 160.07
+  },
+  "imbalance": {
+    "dataset_level": {
+      "largest_class": "glioma",
+      "largest_count": 1800,
+      "smallest_class": "glioma",
+      "smallest_count": 1800,
+      "largest_to_smallest_ratio": 1.0
+    },
+    "per_split": {
+      "Training": {
+        "largest_class": "glioma",
+        "largest_count": 1400,
+        "smallest_class": "glioma",
+        "smallest_count": 1400,
+        "largest_to_smallest_ratio": 1.0
+      },
+      "Testing": {
+        "largest_class": "glioma",
+        "largest_count": 400,
+        "smallest_class": "glioma",
+        "smallest_count": 400,
+        "largest_to_smallest_ratio": 1.0
+      }
+    }
+  },
+  "extensions": {
+    "image_extensions": {
+      ".jpg": 7200
+    },
+    "non_image_extensions": {}
+  },
+  "dimensions": {
+    "unique_combinations": 447,
+    "min_width": 150,
+    "max_width": 1375,
+    "min_height": 167,
+    "max_height": 1446,
+    "most_common": [
+      {
+        "width": 512,
+        "height": 512,
+        "count": 5014,
+        "percentage": 69.64
+      },
+      {
+        "width": 225,
+        "height": 225,
+        "count": 338,
+        "percentage": 4.69
+      },
+      {
+        "width": 630,
+        "height": 630,
+        "count": 90,
+        "percentage": 1.25
+      },
+      {
+        "width": 201,
+        "height": 251,
+        "count": 57,
+        "percentage": 0.79
+      },
+      {
+        "width": 228,
+        "height": 221,
+        "count": 51,
+        "percentage": 0.71
+      },
+      {
+        "width": 232,
+        "height": 217,
+        "count": 50,
+        "percentage": 0.69
+      },
+      {
+        "width": 442,
+        "height": 442,
+        "count": 48,
+        "percentage": 0.67
+      },
+      {
+        "width": 236,
+        "height": 236,
+        "count": 48,
+        "percentage": 0.67
+      },
+      {
+        "width": 150,
+        "height": 198,
+        "count": 44,
+        "percentage": 0.61
+      },
+      {
+        "width": 200,
+        "height": 252,
+        "count": 43,
+        "percentage": 0.6
+      }
+    ]
+  },
+  "modes": {
+    "counts_by_mode": {
+      "RGB": 4129,
+      "L": 3067,
+      "RGBA": 3,
+      "P": 1
+    },
+    "grayscale_L": 3067,
+    "rgb": 4129,
+    "rgba": 3,
+    "unusual_modes": {
+      "P": 1
+    }
+  },
+  "format_extension_mismatches": {
+    "count": 4,
+    "examples": [
+      {
+        "relative_path": "Training/notumor/Tr-no_1200.jpg",
+        "extension": ".jpg",
+        "actual_format": "PNG"
+      },
+      {
+        "relative_path": "Training/notumor/Tr-no_22.jpg",
+        "extension": ".jpg",
+        "actual_format": "PNG"
+      },
+      {
+        "relative_path": "Training/notumor/Tr-no_572.jpg",
+        "extension": ".jpg",
+        "actual_format": "PNG"
+      },
+      {
+        "relative_path": "Training/notumor/Tr-no_625.jpg",
+        "extension": ".jpg",
+        "actual_format": "PNG"
+      }
+    ]
+  },
+  "corrupt_images": {
+    "count": 0,
+    "by_split": {},
+    "examples": []
+  },
+  "duplicates": {
+    "groups_total": 153,
+    "files_in_duplicate_groups": 340,
+    "groups_within_splits": {
+      "Training": 138,
+      "Testing": 15
+    },
+    "groups_crossing_splits": 0,
+    "unique_hashes_crossing_splits": 0,
+    "cross_split_files_training": 0,
+    "cross_split_files_testing": 0,
+    "conflicting_class_groups": 0,
+    "conflicting_class_files": 0,
+    "duplicate_file_ratio_percent": 4.72
+  },
+  "perceptual_duplicates": {
+    "status": "completed",
+    "method": "pHash (64-bit), Hamming distance <= 8",
+    "images_hashed": 7200,
+    "hash_failures": 0,
+    "near_duplicate_pairs": 14853,
+    "pairs_capped": false,
+    "groups": 809,
+    "files_in_groups": 6132,
+    "largest_group_size": 2789,
+    "cross_split_groups": 454,
+    "conflicting_class_groups": 45,
+    "note": "Heuristic similarity only - not proof of duplication. Never delete files based on this section alone. Groups are connected components at the threshold, so very large group(s) can reflect transitive similarity chaining rather than one duplicate cluster."
+  },
+  "warnings": [
+    "4 image(s) whose real format does not match their extension."
+  ]
+}

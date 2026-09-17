@@ -96,6 +96,20 @@ models/*
 results/*
 !results/.gitkeep
 
+# Phase 2 dataset-audit summaries: whitelist only the small, reproducible
+# artefacts (the large per-file image_metadata.csv stays ignored and can be
+# regenerated with:  python -m src.data.audit_dataset )
+!results/dataset_audit/
+!results/dataset_audit/class_distribution.csv
+!results/dataset_audit/corrupt_images.csv
+!results/dataset_audit/exact_duplicates.csv
+!results/dataset_audit/cross_split_duplicates.csv
+!results/dataset_audit/perceptual_duplicates.csv
+!results/dataset_audit/dataset_summary.json
+!results/dataset_audit/audit_report.md
+!results/dataset_audit/class_distribution.png
+!results/dataset_audit/image_dimension_distribution.png
+
 # ──────────────────────────────────────────────
 # Temporary files
 # ──────────────────────────────────────────────
