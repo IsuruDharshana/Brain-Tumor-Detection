@@ -1,0 +1,13 @@
+processed_split,label_name,image_count,percentage
+train,glioma,1120,25.78
+train,meningioma,1109,25.53
+train,notumor,1025,23.6
+train,pituitary,1090,25.09
+validation,glioma,280,25.81
+validation,meningioma,277,25.53
+validation,notumor,256,23.59
+validation,pituitary,272,25.07
+test,glioma,400,25.0
+test,meningioma,400,25.0
+test,notumor,400,25.0
+test,pituitary,400,25.0
