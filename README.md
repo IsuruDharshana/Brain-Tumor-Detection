@@ -5,13 +5,17 @@ Network (CNN) to classify brain MRI scans into tumour categories.
 
 ---
 
-## Current Purpose (Phase 1)
+## Current Status
 
-Set up a clean, portable Python project environment on the development
-laptop (Intel Core i5 12th Gen · 8 GB RAM · no dedicated GPU).
-
-Full deep-learning **model training** will be performed on a separate
-**NVIDIA RTX 3060 12 GB / 32 GB RAM** workstation in a later phase.
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Environment setup | ✅ Complete |
+| 2 | Dataset acquisition and audit | ✅ Complete |
+| 3 | Preprocessing and tf.data pipeline | ✅ Complete |
+| 4 | Baseline custom CNN | ✅ Complete |
+| 5 | EfficientNetB0 transfer learning | ⏳ Pending |
+| 6 | Final evaluation + model comparison + Grad-CAM | ⏳ Pending |
+| 7 | Streamlit application | ⏳ Pending |
 
 ---
 
@@ -224,6 +228,90 @@ python -m pytest
 The suite covers the Phase 2 dataset audit and the Phase 3 preprocessing /
 split / tf.data pipeline logic. It runs on small synthetic images and does
 not require the full Kaggle dataset.
+
+---
+
+## Baseline CNN (Phase 4)
+
+Phase 4 establishes a reproducible baseline custom CNN **trained entirely from
+scratch** (no pretrained weights). Its sole purpose is to provide a fair
+scientific reference point for the EfficientNetB0 transfer-learning model built
+in Phase 5 and evaluated head-to-head in Phase 6.
+
+### Purpose
+
+A credible baseline that is deliberately simple:
+
+- Confirms the tf.data pipeline and training infrastructure work end-to-end.
+- Gives a meaningful lower-bound accuracy against which transfer learning will
+  be compared.
+- Demonstrates what a straightforward CNN can achieve on 4,344 training images.
+
+### Architecture
+
+```
+Input (224 × 224 × 3)
+│
+├─ Block 1: Conv2D(32, 3×3, same, relu) → BatchNorm → MaxPool2D → (112, 112, 32)
+├─ Block 2: Conv2D(64, 3×3, same, relu) → BatchNorm → MaxPool2D →  (56,  56, 64)
+├─ Block 3: Conv2D(128,3×3, same, relu) → BatchNorm → MaxPool2D →  (28,  28,128)
+├─ Block 4: Conv2D(256, 3×3, same, relu) → BatchNorm            →  (28,  28,256)
+│
+├─ GlobalAveragePooling2D → (256,)
+├─ Dense(128, relu)
+├─ Dropout(0.4)
+└─ Dense(4, softmax, float32) → (4,)
+```
+
+No pretrained weights. No EfficientNet, MobileNet, ResNet, VGG, DenseNet or
+any other transfer-learning backbone.
+
+### Training configuration
+
+| Setting | Value |
+|---------|-------|
+| Optimizer | Adam |
+| Initial learning rate | 0.001 |
+| Loss | SparseCategoricalCrossentropy |
+| Metrics | accuracy |
+| Batch size | 32 |
+| Maximum epochs | 30 |
+| Seed | 42 |
+
+### Callbacks
+
+| Callback | Setting |
+|----------|---------|
+| ModelCheckpoint | monitor `val_loss`, save best only → `models/baseline_cnn.keras` |
+| EarlyStopping | monitor `val_loss`, patience 5, `restore_best_weights=True` |
+| ReduceLROnPlateau | monitor `val_loss`, factor 0.5, patience 2, min LR 1e-6 |
+
+### Training
+
+Training runs on the **NVIDIA RTX 3060 (12 GB)** GPU workstation under
+WSL2/Ubuntu. The CPU laptop is used for development only.
+
+```bash
+# From the repository root, inside the virtual environment
+python -m src.models.train_baseline
+```
+
+### Outputs
+
+| Artefact | Location |
+|----------|----------|
+| Best model checkpoint | `models/baseline_cnn.keras` (**not committed** — large binary) |
+| Model summary | `results/baseline_cnn/model_summary.txt` |
+| Per-epoch metrics CSV | `results/baseline_cnn/training_history.csv` |
+| Training curves PNG | `results/baseline_cnn/training_curves.png` |
+| Results summary | `results/baseline_cnn/training_summary.json` |
+| Experiment config | `results/baseline_cnn/run_config.json` |
+
+### Test-set evaluation
+
+**The official Testing split (1,600 images) is NOT evaluated in Phase 4.**
+It remains completely untouched and is reserved for the final head-to-head
+comparison in Phase 6 (baseline CNN vs. EfficientNetB0).
 
 ---
 

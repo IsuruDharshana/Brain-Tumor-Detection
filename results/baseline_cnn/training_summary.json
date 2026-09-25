@@ -1,0 +1,33 @@
+{
+  "model_name": "baseline_cnn",
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "num_classes": 4,
+  "train_samples": 4344,
+  "validation_samples": 1085,
+  "batch_size": 32,
+  "max_epochs": 30,
+  "epochs_completed": 26,
+  "best_epoch": 21,
+  "best_validation_loss": 0.245063,
+  "best_validation_accuracy": 0.913364,
+  "final_training_accuracy": 0.960866,
+  "final_validation_accuracy": 0.866359,
+  "initial_learning_rate": 0.001,
+  "final_learning_rate": 0.001,
+  "training_duration_seconds": 358.4,
+  "training_start_utc": "2026-09-25T15:47:19.927418+00:00",
+  "training_end_utc": "2026-09-25T15:53:44.941587+00:00",
+  "total_parameters": 423748,
+  "trainable_parameters": 422788,
+  "non_trainable_parameters": 960,
+  "python_version": "3.12.3",
+  "tensorflow_version": "2.17.1",
+  "gpu_detected": true,
+  "gpu_device_name": "/device:GPU:0",
+  "early_stopping_triggered": true,
+  "best_model_path": "/home/user/projects/Brain-Tumor-Detection/models/baseline_cnn.keras"
+}
