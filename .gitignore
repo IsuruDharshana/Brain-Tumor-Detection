@@ -125,6 +125,17 @@ results/*
 !results/preprocessing/class_distribution.csv
 !results/preprocessing/preprocessing_samples.png
 
+# Phase 4 baseline CNN artefacts: whitelist small reproducible outputs.
+# The trained model checkpoint (models/baseline_cnn.keras) is NOT committed
+# because models/* is intentionally ignored (large binary files).
+# Regenerate training results with:  python -m src.models.train_baseline
+!results/baseline_cnn/
+!results/baseline_cnn/model_summary.txt
+!results/baseline_cnn/training_history.csv
+!results/baseline_cnn/training_curves.png
+!results/baseline_cnn/training_summary.json
+!results/baseline_cnn/run_config.json
+
 # ──────────────────────────────────────────────
 # Temporary files
 # ──────────────────────────────────────────────
