@@ -170,12 +170,13 @@ def test_predicted_class_ids_in_valid_range(
 
 
 def test_model_has_trainable_parameters(baseline_model: tf.keras.Model) -> None:
-    """Model must have a non-trivial number of trainable parameters (> 1 M)."""
+    """Model should be non-trivial but still lightweight for a baseline CNN."""
     trainable_params = sum(
         np.prod(var.shape) for var in baseline_model.trainable_variables
     )
-    assert trainable_params > 1_000_000, (
-        f"Model has only {trainable_params:,} trainable params — seems too small."
+    assert 100_000 < trainable_params < 2_000_000, (
+        f"Expected 100k–2M trainable params for this baseline, "
+        f"got {trainable_params:,}."
     )
 
 
