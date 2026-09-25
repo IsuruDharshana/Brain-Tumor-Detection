@@ -1,0 +1,53 @@
+{
+  "generated_at_utc": "2026-09-17T17:01:55Z",
+  "phase": "Phase 3 - preprocessing and data input pipeline",
+  "random_seed": 42,
+  "validation_fraction": 0.2,
+  "image_size": {
+    "height": 224,
+    "width": 224
+  },
+  "channels": 3,
+  "normalization_method": "divide by 255.0 -> float32 pixel values in [0, 1]",
+  "label_mapping": {
+    "glioma": 0,
+    "meningioma": 1,
+    "notumor": 2,
+    "pituitary": 3
+  },
+  "original_training_count": 5600,
+  "deduplicated_training_count": 5429,
+  "removed_duplicate_count": 171,
+  "removed_duplicates_per_class": {
+    "glioma": 0,
+    "meningioma": 14,
+    "notumor": 119,
+    "pituitary": 38
+  },
+  "train_count": 4344,
+  "validation_count": 1085,
+  "test_count": 1600,
+  "class_counts": {
+    "train": {
+      "glioma": 1120,
+      "meningioma": 1109,
+      "notumor": 1025,
+      "pituitary": 1090
+    },
+    "validation": {
+      "glioma": 280,
+      "meningioma": 277,
+      "notumor": 256,
+      "pituitary": 272
+    },
+    "test": {
+      "glioma": 400,
+      "meningioma": 400,
+      "notumor": 400,
+      "pituitary": 400
+    }
+  },
+  "deduplication_policy": "inside each exact SHA-256 duplicate group of the Training pool, keep the lexicographically first normalised relative path and exclude every other member from the processed training pool (raw files stay untouched)",
+  "split_policy": "stratified per-class split of the cleaned Training pool: each class list is sorted by relative path, shuffled with a single random.Random(seed) used in the fixed CLASS_NAMES order, and the first round(n * validation_fraction) entries become validation; the original Testing split is kept fully isolated",
+  "test_duplicates_note": "the original Testing split is kept unchanged in the primary test manifest; its internal exact duplicates are listed in test_duplicates.csv for a Phase 6 sensitivity analysis"
+}

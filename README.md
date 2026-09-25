@@ -22,7 +22,7 @@ brain-tumor-classification/
 ├── app/                  # Streamlit web UI (Phase 3+)
 ├── data/
 │   ├── raw/              # Original, unmodified dataset (not committed)
-│   └── processed/        # Pre-processed images / splits (not committed)
+│   └── processed/        # Split manifests (small committed CSVs; no image copies)
 ├── models/               # Saved model weights (not committed)
 ├── notebooks/            # Exploratory data-analysis notebooks
 ├── results/              # Plots, metrics, confusion matrices
@@ -160,11 +160,70 @@ Notes:
 
 ---
 
+## Preprocessing and data pipeline (Phase 3)
+
+Phase 3 converts the audited raw dataset into a reproducible training /
+validation / testing setup. **No model training happens in this phase.**
+
+Design decisions:
+
+- `data/raw` stays **immutable** — nothing there is modified, renamed or
+  deleted; all cleaning is expressed through manifests only.
+- **Exact duplicates are removed from the Training pool logically**: in every
+  SHA-256 duplicate group the lexicographically first path is kept and the
+  other members are excluded from the processed pool (they stay on disk).
+  Only exact SHA-256 duplicates are used — perceptual (pHash) similarity is
+  never used to remove images.
+- **Validation is created from the deduplicated Training pool only** with a
+  deterministic, stratified 80/20 train/validation split (seed **42**,
+  per-class shuffle). Duplicates can therefore never be split between
+  train and validation.
+- The **original Kaggle Testing split stays fully isolated** and unchanged;
+  its internal duplicates are kept for the official evaluation and listed
+  separately in `results/preprocessing/test_duplicates.csv` for a later
+  deduplicated-test sensitivity analysis.
+- Every image is decoded (JPEG or PNG content), converted to **RGB**,
+  resized to **224×224**, kept as **float32** and normalised to **[0, 1]**
+  (division by 255.0).
+- **Mild augmentation is applied to the training split only** (rotation ±8°,
+  zoom ≤8%, translation ≤5%, mild contrast; no flips, shear or crops — MRI
+  left/right orientation can carry meaning). Validation/test pipelines are
+  deterministic and unaugmented.
+- Preprocessing happens **on the fly** in the tf.data pipeline — no resized
+  image copies are written to disk.
+
+| Artefact | Location |
+|---|---|
+| Manifests (portable relative paths) | `data/processed/{train,val,test}_manifest.csv` |
+| Deduplication report | `results/preprocessing/training_deduplication.csv` |
+| Test duplicate metadata (Phase 6 aid) | `results/preprocessing/test_duplicates.csv` |
+| Split summary (seed, counts, mapping) | `results/preprocessing/split_summary.json` |
+| Class distribution | `results/preprocessing/class_distribution.csv` |
+| Preprocessing sanity image | `results/preprocessing/preprocessing_samples.png` |
+
+Label mapping (fixed, independent of filesystem order):
+`glioma=0, meningioma=1, notumor=2, pituitary=3` — integer labels, ready for
+`SparseCategoricalCrossentropy` in Phase 4.
+
+### Commands
+
+```powershell
+python -m src.data.create_splits          # regenerate manifests + summaries (deterministic)
+python -m src.data.verify_pipeline        # leakage checks + one real batch per pipeline
+python -m src.data.preprocessing_samples  # optional visual sanity check (PNG)
+```
+
+---
+
 ## Running Tests
 
 ```powershell
 python -m pytest
 ```
+
+The suite covers the Phase 2 dataset audit and the Phase 3 preprocessing /
+split / tf.data pipeline logic. It runs on small synthetic images and does
+not require the full Kaggle dataset.
 
 ---
 

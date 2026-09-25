@@ -110,6 +110,21 @@ results/*
 !results/dataset_audit/class_distribution.png
 !results/dataset_audit/image_dimension_distribution.png
 
+# Phase 3 preprocessing artefacts: whitelist only the small, deterministic
+# outputs. The manifests are portable CSV metadata (relative paths only);
+# resized images are never written to disk - preprocessing happens on the
+# fly in the tf.data pipeline. Regenerate with:
+#   python -m src.data.create_splits
+!data/processed/train_manifest.csv
+!data/processed/val_manifest.csv
+!data/processed/test_manifest.csv
+!results/preprocessing/
+!results/preprocessing/training_deduplication.csv
+!results/preprocessing/test_duplicates.csv
+!results/preprocessing/split_summary.json
+!results/preprocessing/class_distribution.csv
+!results/preprocessing/preprocessing_samples.png
+
 # ──────────────────────────────────────────────
 # Temporary files
 # ──────────────────────────────────────────────
