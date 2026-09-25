@@ -136,6 +136,18 @@ results/*
 !results/baseline_cnn/training_summary.json
 !results/baseline_cnn/run_config.json
 
+# Phase 5 EfficientNetB0 artefacts: whitelist small reproducible outputs.
+# Model checkpoints (models/*.keras) are NOT committed — large binary files.
+# Regenerate with:  python -m src.models.train_efficientnet
+!results/efficientnet_b0/
+!results/efficientnet_b0/model_summary.txt
+!results/efficientnet_b0/frozen_history.csv
+!results/efficientnet_b0/finetune_history.csv
+!results/efficientnet_b0/training_curves.png
+!results/efficientnet_b0/training_summary.json
+!results/efficientnet_b0/run_config.json
+!results/efficientnet_b0/stage_comparison.json
+
 # ──────────────────────────────────────────────
 # Temporary files
 # ──────────────────────────────────────────────

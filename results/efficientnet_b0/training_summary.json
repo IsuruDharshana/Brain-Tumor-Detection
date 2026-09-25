@@ -1,0 +1,63 @@
+{
+  "model_name": "efficientnet_b0_transfer",
+  "tensorflow_version": "2.17.1",
+  "python_version": "3.12.3",
+  "gpu_detected": true,
+  "gpu_device_name": "/device:GPU:0",
+  "train_samples": 4344,
+  "validation_samples": 1085,
+  "batch_size": 32,
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "num_classes": 4,
+  "class_mapping": {
+    "glioma": 0,
+    "meningioma": 1,
+    "notumor": 2,
+    "pituitary": 3
+  },
+  "preprocessing_strategy": "Phase 3 pipeline delivers float32 [0,1]. Model-side Rescaling(255.0) adapter converts to [0,255] before EfficientNetB0 backbone (which has its own internal Rescaling(1/255)). No double normalisation.",
+  "stage_1_frozen": {
+    "optimizer": "Adam",
+    "initial_learning_rate": 0.001,
+    "max_epochs": 15,
+    "epochs_completed": 15,
+    "best_epoch": 12,
+    "best_validation_loss": 0.314871,
+    "best_validation_accuracy": 0.870968,
+    "final_learning_rate": 0.00025,
+    "early_stopping_triggered": false,
+    "trainable_parameters": 164484,
+    "frozen_parameters": 4049571,
+    "trainable_layers": 7,
+    "frozen_layers": 238,
+    "duration_seconds": 184.6
+  },
+  "stage_2_finetuned": {
+    "optimizer": "Adam",
+    "initial_learning_rate": 1e-05,
+    "max_epochs": 15,
+    "epochs_completed": 9,
+    "best_epoch": 5,
+    "best_validation_loss": 0.287833,
+    "best_validation_accuracy": 0.883871,
+    "final_learning_rate": 2.5e-06,
+    "early_stopping_triggered": true,
+    "unfrozen_backbone_layers": 30,
+    "batchnorm_kept_frozen": true,
+    "trainable_parameters": 1647844,
+    "frozen_parameters": 2566211,
+    "trainable_layers": 30,
+    "frozen_layers": 215,
+    "duration_seconds": 114.8
+  },
+  "selected_stage": 2,
+  "selected_validation_loss": 0.287833,
+  "selected_validation_accuracy": 0.883871,
+  "total_training_duration_seconds": 299.4,
+  "best_model_path": "/home/user/projects/Brain-Tumor-Detection/models/efficientnet_b0.keras",
+  "test_set_evaluated": false
+}

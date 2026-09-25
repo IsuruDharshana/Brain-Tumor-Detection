@@ -13,7 +13,7 @@ Network (CNN) to classify brain MRI scans into tumour categories.
 | 2 | Dataset acquisition and audit | ✅ Complete |
 | 3 | Preprocessing and tf.data pipeline | ✅ Complete |
 | 4 | Baseline custom CNN | ✅ Complete |
-| 5 | EfficientNetB0 transfer learning | ⏳ Pending |
+| 5 | EfficientNetB0 transfer learning | ✅ Complete |
 | 6 | Final evaluation + model comparison + Grad-CAM | ⏳ Pending |
 | 7 | Streamlit application | ⏳ Pending |
 
@@ -312,6 +312,110 @@ python -m src.models.train_baseline
 **The official Testing split (1,600 images) is NOT evaluated in Phase 4.**
 It remains completely untouched and is reserved for the final head-to-head
 comparison in Phase 6 (baseline CNN vs. EfficientNetB0).
+
+---
+
+## EfficientNetB0 Transfer Learning (Phase 5)
+
+Phase 5 implements **ImageNet transfer learning** using EfficientNetB0 as a
+feature extractor. The model is trained in two stages on the same data splits
+as Phase 4, using validation metrics only for model selection. The test set
+remains reserved for Phase 6.
+
+### Preprocessing strategy
+
+The Phase 3 tf.data pipeline delivers images as **float32 in [0, 1]**.
+EfficientNetB0 in TF/Keras 2.x includes an internal `Rescaling(1/255)` layer
+and expects **[0, 255]** float32 inputs.
+
+To avoid double normalisation while keeping the shared data pipeline
+unchanged, the model includes an explicit **model-side adapter layer**:
+
+```
+Input [0, 1]  (Phase 3 pipeline output)
+    │
+    ▼  Rescaling(scale=255.0)  ← adapter inside the model
+    │
+    ▼  [0, 255] float32
+    EfficientNetB0 (internal Rescaling(1/255) → ImageNet feature space)
+```
+
+`tf.keras.applications.efficientnet.preprocess_input` is **not** called —
+it is a pass-through in TF 2.x and adds no value here.
+
+### Model architecture
+
+```
+Input (224 × 224 × 3) — float32, [0, 1]
+    │
+    ▼ Rescaling(255.0)               adapter: [0,1] → [0,255]
+    ▼ EfficientNetB0(include_top=F)  ~4 M params; internal Rescaling(1/255)
+    ▼ GlobalAveragePooling2D         → (1280,)
+    ▼ Dropout(0.3)
+    ▼ Dense(128, relu)
+    ▼ Dropout(0.3)
+    └ Dense(4, softmax, float32)     → (4,)
+```
+
+No pretrained weights are used for the classifier head. No Flatten layer.
+
+### Transfer learning strategy
+
+**Stage 1 — Frozen backbone (head training)**
+
+| Setting | Value |
+|---------|-------|
+| EfficientNetB0 | fully frozen |
+| Optimizer | Adam |
+| Learning rate | 1e-3 |
+| Max epochs | 15 (EarlyStopping patience 4) |
+| Batch size | 32 |
+
+**Stage 2 — Controlled fine-tuning**
+
+| Setting | Value |
+|---------|-------|
+| Unfrozen backbone layers | last 30 |
+| BatchNormalization layers | kept frozen |
+| Optimizer | Adam |
+| Learning rate | 1e-5 |
+| Max epochs | 15 (EarlyStopping patience 4) |
+| Batch size | 32 |
+
+### Model selection
+
+The final model is selected by comparing **validation loss** from Stage 1 and
+Stage 2. The lower-loss checkpoint is copied to `models/efficientnet_b0.keras`.
+No test-set metric is used for selection.
+
+### Command
+
+```bash
+# From the repository root, inside the virtual environment (WSL2)
+python -m src.models.train_efficientnet
+```
+
+### Outputs
+
+| Artefact | Location |
+|----------|----------|
+| Stage 1 checkpoint | `models/efficientnet_b0_frozen.keras` (**not committed**) |
+| Stage 2 checkpoint | `models/efficientnet_b0_finetuned.keras` (**not committed**) |
+| Final model | `models/efficientnet_b0.keras` (**not committed**) |
+| Model summary | `results/efficientnet_b0/model_summary.txt` |
+| Stage 1 history CSV | `results/efficientnet_b0/frozen_history.csv` |
+| Stage 2 history CSV | `results/efficientnet_b0/finetune_history.csv` |
+| Training curves | `results/efficientnet_b0/training_curves.png` |
+| Training summary | `results/efficientnet_b0/training_summary.json` |
+| Run config | `results/efficientnet_b0/run_config.json` |
+| Stage comparison | `results/efficientnet_b0/stage_comparison.json` |
+
+### Test-set evaluation
+
+**The official Testing split is NOT evaluated in Phase 5.**
+`training_summary.json` explicitly records `"test_set_evaluated": false`.
+Final head-to-head comparison (baseline CNN vs. EfficientNetB0) happens in
+Phase 6 using the reserved test set.
 
 ---
 

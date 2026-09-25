@@ -1,0 +1,25 @@
+{
+  "stage_1_frozen": {
+    "epochs_completed": 15,
+    "best_epoch": 12,
+    "best_validation_loss": 0.314871,
+    "best_validation_accuracy": 0.870968,
+    "final_learning_rate": 0.00025,
+    "early_stopping_triggered": false,
+    "duration_seconds": 184.6
+  },
+  "stage_2_finetuned": {
+    "epochs_completed": 9,
+    "best_epoch": 5,
+    "best_validation_loss": 0.287833,
+    "best_validation_accuracy": 0.883871,
+    "final_learning_rate": 2.5e-06,
+    "early_stopping_triggered": true,
+    "duration_seconds": 114.8
+  },
+  "selected_stage": 2,
+  "selected_validation_loss": 0.287833,
+  "selected_validation_accuracy": 0.883871,
+  "selection_criterion": "lowest val_loss",
+  "test_set_evaluated": false
+}

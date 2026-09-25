@@ -1,0 +1,50 @@
+{
+  "seed": 42,
+  "image_size": [
+    224,
+    224
+  ],
+  "channels": 3,
+  "preprocessing": {
+    "data_pipeline_range": "[0, 1] float32",
+    "adapter": "Rescaling(255.0) inside model",
+    "backbone_input_range": "[0, 255] float32",
+    "backbone_internal_rescaling": "Rescaling(1/255) inside EfficientNetB0"
+  },
+  "augmentation": {
+    "applied_to": "training split only",
+    "rotation_degrees": 8,
+    "zoom_factor": 0.08,
+    "translation_factor": 0.05,
+    "contrast_factor": 0.1,
+    "flips": false
+  },
+  "stage_1": {
+    "description": "frozen backbone \u2014 head only",
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "max_epochs": 15,
+    "es_patience": 4,
+    "lr_patience": 2,
+    "lr_factor": 0.5,
+    "lr_min": 1e-06,
+    "checkpoint": "/home/user/projects/Brain-Tumor-Detection/models/efficientnet_b0_frozen.keras"
+  },
+  "stage_2": {
+    "description": "controlled fine-tuning",
+    "unfrozen_backbone_layers": 30,
+    "bn_frozen": true,
+    "optimizer": "Adam",
+    "learning_rate": 1e-05,
+    "max_epochs": 15,
+    "es_patience": 4,
+    "lr_patience": 2,
+    "lr_factor": 0.5,
+    "lr_min": 1e-07,
+    "checkpoint": "/home/user/projects/Brain-Tumor-Detection/models/efficientnet_b0_finetuned.keras"
+  },
+  "batch_size": 32,
+  "loss": "SparseCategoricalCrossentropy",
+  "num_classes": 4,
+  "final_model": "/home/user/projects/Brain-Tumor-Detection/models/efficientnet_b0.keras"
+}
