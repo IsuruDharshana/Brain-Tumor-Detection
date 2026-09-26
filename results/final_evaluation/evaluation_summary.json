@@ -1,0 +1,147 @@
+{
+  "disclaimer": "EDUCATIONAL/RESEARCH SOFTWARE. This project classifies brain MRI images for educational and research purposes only. It is NOT a clinical diagnostic tool. Results must NOT be used for medical decision-making. Grad-CAM visualisations are explanatory only and do NOT constitute tumour segmentation or proof of lesion location.",
+  "tensorflow_version": "2.17.1",
+  "python_version": "3.12.3",
+  "device": "/physical_device:GPU:0",
+  "eval_timestamp_utc": "2026-09-26T08:58:17.828080+00:00",
+  "official_test_evaluations_this_run": 1,
+  "test_sample_count": 1600,
+  "class_mapping": {
+    "glioma": 0,
+    "meningioma": 1,
+    "notumor": 2,
+    "pituitary": 3
+  },
+  "class_names_fixed_order": [
+    "glioma",
+    "meningioma",
+    "notumor",
+    "pituitary"
+  ],
+  "primary_comparison_metric": "macro_f1",
+  "models": [
+    {
+      "key": "baseline",
+      "display_name": "Baseline CNN",
+      "path": "/home/user/projects/Brain-Tumor-Detection/models/baseline_cnn.keras",
+      "preprocessing": "Phase 3 pipeline output [0,1] float32 passed directly. No external rescaling.",
+      "primary_metrics": {
+        "accuracy": 0.85125,
+        "macro_precision": 0.8588518166117254,
+        "macro_recall": 0.85125,
+        "macro_f1": 0.8494955786715707,
+        "weighted_precision": 0.8588518166117254,
+        "weighted_recall": 0.85125,
+        "weighted_f1": 0.8494955786715707,
+        "per_class": [
+          {
+            "class": "glioma",
+            "label_id": 0,
+            "precision": 0.8902439024390244,
+            "recall": 0.73,
+            "f1": 0.8021978021978022,
+            "support": 400
+          },
+          {
+            "class": "meningioma",
+            "label_id": 1,
+            "precision": 0.8251928020565553,
+            "recall": 0.8025,
+            "f1": 0.8136882129277566,
+            "support": 400
+          },
+          {
+            "class": "notumor",
+            "label_id": 2,
+            "precision": 0.7843137254901961,
+            "recall": 1.0,
+            "f1": 0.8791208791208791,
+            "support": 400
+          },
+          {
+            "class": "pituitary",
+            "label_id": 3,
+            "precision": 0.935656836461126,
+            "recall": 0.8725,
+            "f1": 0.9029754204398448,
+            "support": 400
+          }
+        ]
+      },
+      "gradcam_target_layer": "block4_conv"
+    },
+    {
+      "key": "efficientnet",
+      "display_name": "EfficientNetB0 Transfer",
+      "path": "/home/user/projects/Brain-Tumor-Detection/models/efficientnet_b0.keras",
+      "preprocessing": "Phase 3 pipeline output [0,1] float32 passed directly. Model contains internal Rescaling(255.0) adapter \u2014 DO NOT rescale externally.",
+      "primary_metrics": {
+        "accuracy": 0.843125,
+        "macro_precision": 0.8549993029008611,
+        "macro_recall": 0.843125,
+        "macro_f1": 0.83664680616978,
+        "weighted_precision": 0.854999302900861,
+        "weighted_recall": 0.843125,
+        "weighted_f1": 0.8366468061697802,
+        "per_class": [
+          {
+            "class": "glioma",
+            "label_id": 0,
+            "precision": 0.946360153256705,
+            "recall": 0.6175,
+            "f1": 0.7473524962178517,
+            "support": 400
+          },
+          {
+            "class": "meningioma",
+            "label_id": 1,
+            "precision": 0.7928388746803069,
+            "recall": 0.775,
+            "f1": 0.7838179519595448,
+            "support": 400
+          },
+          {
+            "class": "notumor",
+            "label_id": 2,
+            "precision": 0.9038901601830663,
+            "recall": 0.9875,
+            "f1": 0.9438470728793309,
+            "support": 400
+          },
+          {
+            "class": "pituitary",
+            "label_id": 3,
+            "precision": 0.776908023483366,
+            "recall": 0.9925,
+            "f1": 0.8715697036223929,
+            "support": 400
+          }
+        ]
+      },
+      "gradcam_target_layer": "top_conv"
+    }
+  ],
+  "model_selection": {
+    "selected_model": "Baseline CNN",
+    "primary_metric": "macro_f1",
+    "primary_scores": {
+      "Baseline CNN": 0.8494955786715707,
+      "EfficientNetB0 Transfer": 0.83664680616978
+    },
+    "secondary_metric": "accuracy",
+    "secondary_scores": {
+      "Baseline CNN": 0.85125,
+      "EfficientNetB0 Transfer": 0.843125
+    },
+    "is_tie": false,
+    "note": "Selected 'Baseline CNN' with macro_f1=0.8495 (margin +0.0129 over next best)."
+  },
+  "selected_model_for_phase7": "Baseline CNN",
+  "gradcam_disclaimer": "Grad-CAM highlights regions influencing the model's decision. It is NOT tumour segmentation and does NOT prove lesion location.",
+  "duplicate_sensitivity": {
+    "test_duplicate_groups": 15,
+    "redundant_copies_removed": 16,
+    "note": "Primary reported metrics use the full official test set. Sensitivity analysis is secondary only."
+  },
+  "total_evaluation_time_seconds": 23.3
+}

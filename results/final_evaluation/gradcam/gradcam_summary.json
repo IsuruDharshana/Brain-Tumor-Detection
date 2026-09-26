@@ -1,0 +1,77 @@
+{
+  "selected_model": "Baseline CNN",
+  "model_file": "baseline_cnn.keras",
+  "target_layer": "block4_conv",
+  "selection_rule": "Deterministic lexicographic sort by filepath; exactly one correct example per class and up to two misclassified examples.",
+  "number_correct_examples": 4,
+  "number_misclassified_examples": 2,
+  "examples": [
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/glioma/Te-gl_10.jpg",
+      "example_type": "correct",
+      "true_label_id": 0,
+      "true_label_name": "glioma",
+      "predicted_label_id": 0,
+      "predicted_label_name": "glioma",
+      "confidence": 0.999987244606018,
+      "target_layer": "block4_conv",
+      "output_image": "correct_glioma.png"
+    },
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/meningioma/Te-aug-me_1.jpg",
+      "example_type": "correct",
+      "true_label_id": 1,
+      "true_label_name": "meningioma",
+      "predicted_label_id": 1,
+      "predicted_label_name": "meningioma",
+      "confidence": 0.7634499669075012,
+      "target_layer": "block4_conv",
+      "output_image": "correct_meningioma.png"
+    },
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/notumor/Te-no_1.jpg",
+      "example_type": "correct",
+      "true_label_id": 2,
+      "true_label_name": "notumor",
+      "predicted_label_id": 2,
+      "predicted_label_name": "notumor",
+      "confidence": 0.9876205325126648,
+      "target_layer": "block4_conv",
+      "output_image": "correct_notumor.png"
+    },
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/pituitary/Te-pi_1.jpg",
+      "example_type": "correct",
+      "true_label_id": 3,
+      "true_label_name": "pituitary",
+      "predicted_label_id": 3,
+      "predicted_label_name": "pituitary",
+      "confidence": 0.9801406264305116,
+      "target_layer": "block4_conv",
+      "output_image": "correct_pituitary.png"
+    },
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/glioma/Te-gl_1.jpg",
+      "example_type": "misclassified",
+      "true_label_id": 0,
+      "true_label_name": "glioma",
+      "predicted_label_id": 2,
+      "predicted_label_name": "notumor",
+      "confidence": 0.4580463171005249,
+      "target_layer": "block4_conv",
+      "output_image": "misclassified_01.png"
+    },
+    {
+      "filepath": "/home/user/projects/Brain-Tumor-Detection/data/raw/Testing/glioma/Te-gl_101.jpg",
+      "example_type": "misclassified",
+      "true_label_id": 0,
+      "true_label_name": "glioma",
+      "predicted_label_id": 2,
+      "predicted_label_name": "notumor",
+      "confidence": 0.7256646752357483,
+      "target_layer": "block4_conv",
+      "output_image": "misclassified_02.png"
+    }
+  ],
+  "disclaimer": "Grad-CAM highlights regions influencing the model's prediction. It is not tumour segmentation and does not prove lesion location."
+}
