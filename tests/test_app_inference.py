@@ -37,6 +37,10 @@ from src.app.inference import (
     preprocess_image,
     validate_mri_like_image,
 )
+from src.data.preprocessing import (
+    decode_and_preprocess_image_bytes,
+    load_and_preprocess_image,
+)
 from src.app.model_loader import (
     DEFAULT_MODEL_REL_PATH,
     ENV_MODEL_PATH_VAR,
@@ -250,6 +254,57 @@ def test_preprocess_invalid_data_raises_value_error():
     corrupt_bytes = b"not_a_valid_image_file_content"
     with pytest.raises(ValueError, match="Could not decode image"):
         preprocess_image(corrupt_bytes)
+
+
+def test_preprocess_bytearray_input():
+    """Preprocess must accept bytearray input."""
+    img = Image.new("RGB", (40, 40), color=(10, 20, 30))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    raw_bytes = bytearray(buf.getvalue())
+
+    tensor = preprocess_image(raw_bytes)
+    assert tensor.shape == (1, 224, 224, 3)
+    assert tensor.dtype == np.float32
+
+
+def test_preprocess_filepath_input(tmp_path: Path):
+    """Preprocess must accept file paths as str or Path."""
+    img = Image.new("RGB", (50, 50), color=(30, 60, 90))
+    file_path = tmp_path / "test_file.png"
+    img.save(file_path, format="PNG")
+
+    tensor_str = preprocess_image(str(file_path))
+    tensor_path = preprocess_image(file_path)
+
+    assert tensor_str.shape == (1, 224, 224, 3)
+    assert tensor_path.shape == (1, 224, 224, 3)
+    np.testing.assert_allclose(tensor_str, tensor_path, atol=1e-6)
+
+
+@pytest.mark.parametrize("fmt", ["PNG", "JPEG"])
+def test_preprocess_app_matches_phase3_exact(tmp_path: Path, fmt: str):
+    """App preprocessing of raw bytes matches Phase 3 preprocessing exactly."""
+    img = Image.new("RGB", (77, 99), color=(40, 80, 120))
+    buf = io.BytesIO()
+    img.save(buf, format=fmt)
+    raw_bytes = buf.getvalue()
+
+    file_path = tmp_path / f"test_match.{fmt.lower()}"
+    file_path.write_bytes(raw_bytes)
+
+    phase3_out = load_and_preprocess_image(str(file_path)).numpy()
+    app_bytes_out = preprocess_image(raw_bytes)[0]
+    app_path_out = preprocess_image(file_path)[0]
+
+    np.testing.assert_allclose(app_bytes_out, phase3_out, atol=1e-6)
+    np.testing.assert_allclose(app_path_out, phase3_out, atol=1e-6)
+
+
+def test_preprocess_empty_bytes_raises_value_error():
+    """Empty bytes or bytearray must raise ValueError."""
+    with pytest.raises(ValueError, match="Empty image bytes provided"):
+        preprocess_image(b"")
 
 
 # ---------------------------------------------------------------------------
