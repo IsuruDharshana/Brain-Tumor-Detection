@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "model": "Baseline CNN",
+      "accuracy": 0.85125,
+      "macro_precision": 0.8588518166117254,
+      "macro_recall": 0.85125,
+      "macro_f1": 0.8494955786715707,
+      "weighted_precision": 0.8588518166117254,
+      "weighted_recall": 0.85125,
+      "weighted_f1": 0.8494955786715707
+    },
+    {
+      "model": "EfficientNetB0 Transfer",
+      "accuracy": 0.843125,
+      "macro_precision": 0.8549993029008611,
+      "macro_recall": 0.843125,
+      "macro_f1": 0.83664680616978,
+      "weighted_precision": 0.854999302900861,
+      "weighted_recall": 0.843125,
+      "weighted_f1": 0.8366468061697802
+    }
+  ],
+  "winner": {
+    "selected_model": "Baseline CNN",
+    "primary_metric": "macro_f1",
+    "primary_scores": {
+      "Baseline CNN": 0.8494955786715707,
+      "EfficientNetB0 Transfer": 0.83664680616978
+    },
+    "secondary_metric": "accuracy",
+    "secondary_scores": {
+      "Baseline CNN": 0.85125,
+      "EfficientNetB0 Transfer": 0.843125
+    },
+    "is_tie": false,
+    "note": "Selected 'Baseline CNN' with macro_f1=0.8495 (margin +0.0129 over next best)."
+  },
+  "primary_metric": "macro_f1"
+}

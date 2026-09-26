@@ -1,0 +1,46 @@
+{
+  "accuracy": 0.8573232323232324,
+  "macro_precision": 0.8638460981035843,
+  "macro_recall": 0.8563061909287369,
+  "macro_f1": 0.8553429132100857,
+  "weighted_precision": 0.8636629978119739,
+  "weighted_recall": 0.8573232323232324,
+  "weighted_f1": 0.8557656374018124,
+  "per_class": [
+    {
+      "class": "glioma",
+      "label_id": 0,
+      "precision": 0.8892307692307693,
+      "recall": 0.7487046632124352,
+      "f1": 0.8129395218002813,
+      "support": 386
+    },
+    {
+      "class": "meningioma",
+      "label_id": 1,
+      "precision": 0.8311688311688312,
+      "recall": 0.8040201005025126,
+      "f1": 0.8173690932311622,
+      "support": 398
+    },
+    {
+      "class": "notumor",
+      "label_id": 2,
+      "precision": 0.796812749003984,
+      "recall": 1.0,
+      "f1": 0.8869179600886918,
+      "support": 400
+    },
+    {
+      "class": "pituitary",
+      "label_id": 3,
+      "precision": 0.9381720430107527,
+      "recall": 0.8725,
+      "f1": 0.9041450777202072,
+      "support": 400
+    }
+  ],
+  "model": "Baseline CNN",
+  "dataset": "deduplicated test set (1584 images, 16 redundant copies filtered from primary predictions)",
+  "note": "SECONDARY SENSITIVITY ANALYSIS \u2014 NOT the official test score. Primary metrics use the full 1600-image official test set. No additional model inference was performed for this analysis."
+}

@@ -1,0 +1,45 @@
+{
+  "accuracy": 0.843125,
+  "macro_precision": 0.8549993029008611,
+  "macro_recall": 0.843125,
+  "macro_f1": 0.83664680616978,
+  "weighted_precision": 0.854999302900861,
+  "weighted_recall": 0.843125,
+  "weighted_f1": 0.8366468061697802,
+  "per_class": [
+    {
+      "class": "glioma",
+      "label_id": 0,
+      "precision": 0.946360153256705,
+      "recall": 0.6175,
+      "f1": 0.7473524962178517,
+      "support": 400
+    },
+    {
+      "class": "meningioma",
+      "label_id": 1,
+      "precision": 0.7928388746803069,
+      "recall": 0.775,
+      "f1": 0.7838179519595448,
+      "support": 400
+    },
+    {
+      "class": "notumor",
+      "label_id": 2,
+      "precision": 0.9038901601830663,
+      "recall": 0.9875,
+      "f1": 0.9438470728793309,
+      "support": 400
+    },
+    {
+      "class": "pituitary",
+      "label_id": 3,
+      "precision": 0.776908023483366,
+      "recall": 0.9925,
+      "f1": 0.8715697036223929,
+      "support": 400
+    }
+  ],
+  "model": "EfficientNetB0 Transfer",
+  "dataset": "full official test set (1600 images)"
+}

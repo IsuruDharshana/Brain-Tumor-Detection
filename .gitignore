@@ -148,6 +148,35 @@ results/*
 !results/efficientnet_b0/run_config.json
 !results/efficientnet_b0/stage_comparison.json
 
+# Phase 6 final evaluation artefacts: whitelist small reproducible outputs.
+# The official test set is evaluated exactly once via:
+#   python -m src.evaluation.evaluate_models --confirm-test-evaluation
+# Model .keras files are NOT committed (large binaries; already excluded above).
+!results/final_evaluation/
+!results/final_evaluation/baseline_metrics.json
+!results/final_evaluation/efficientnet_metrics.json
+!results/final_evaluation/baseline_classification_report.csv
+!results/final_evaluation/efficientnet_classification_report.csv
+!results/final_evaluation/baseline_predictions.csv
+!results/final_evaluation/efficientnet_predictions.csv
+!results/final_evaluation/baseline_confusion_matrix.csv
+!results/final_evaluation/efficientnet_confusion_matrix.csv
+!results/final_evaluation/baseline_confusion_matrix.png
+!results/final_evaluation/efficientnet_confusion_matrix.png
+!results/final_evaluation/baseline_confusion_matrix_normalized.png
+!results/final_evaluation/efficientnet_confusion_matrix_normalized.png
+!results/final_evaluation/model_comparison.csv
+!results/final_evaluation/model_comparison.json
+!results/final_evaluation/evaluation_summary.json
+!results/final_evaluation/duplicate_sensitivity/
+!results/final_evaluation/duplicate_sensitivity/baseline_metrics.json
+!results/final_evaluation/duplicate_sensitivity/efficientnet_metrics.json
+!results/final_evaluation/duplicate_sensitivity/comparison.csv
+!results/final_evaluation/gradcam/
+!results/final_evaluation/gradcam/*.png
+!results/final_evaluation/gradcam/*.json
+
+
 # ──────────────────────────────────────────────
 # Temporary files
 # ──────────────────────────────────────────────

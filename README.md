@@ -14,7 +14,7 @@ Network (CNN) to classify brain MRI scans into tumour categories.
 | 3 | Preprocessing and tf.data pipeline | ✅ Complete |
 | 4 | Baseline custom CNN | ✅ Complete |
 | 5 | EfficientNetB0 transfer learning | ✅ Complete |
-| 6 | Final evaluation + model comparison + Grad-CAM | ⏳ Pending |
+| 6 | Final evaluation + model comparison + Grad-CAM | ✅ Complete |
 | 7 | Streamlit application | ⏳ Pending |
 
 ---
@@ -416,6 +416,101 @@ python -m src.models.train_efficientnet
 `training_summary.json` explicitly records `"test_set_evaluated": false`.
 Final head-to-head comparison (baseline CNN vs. EfficientNetB0) happens in
 Phase 6 using the reserved test set.
+
+---
+
+## Phase 6 — Final Evaluation, Model Comparison, and Grad-CAM
+
+> **Status: ✅ Complete**
+
+Phase 6 evaluated both pre-trained models — the Baseline Custom CNN (Phase 4) and
+the EfficientNetB0 Transfer model (Phase 5) — on the official, untouched
+test split (`data/processed/test_manifest.csv`, 1 600 images, 400 per class)
+and generated reproducible Grad-CAM visualisations.
+
+### Official Primary Test-Set Results
+
+Evaluated exactly once on the full 1 600-image test set:
+
+| Model | Accuracy | Macro Precision | Macro Recall | Macro F1 | Weighted F1 | Selected for Phase 7 |
+|-------|----------|-----------------|--------------|----------|-------------|----------------------|
+| **Baseline Custom CNN** | **0.8513** (85.125%) | **0.8589** | **0.8513** | **0.8495** | **0.8495** | **Yes (Selected)** |
+| **EfficientNetB0 Transfer** | 0.8431 (84.3125%) | 0.8471 | 0.8431 | 0.8366 | 0.8366 | No |
+
+**Selection Rule:** Highest Macro F1 score on the untouched official test set.
+The **Baseline CNN** achieved higher Macro F1 (0.8495 vs. 0.8366) and higher Accuracy (85.12% vs. 84.31%), and is designated as the primary model for the Phase 7 Streamlit web application.
+
+> **Important:** Both models were evaluated exactly once on the same untouched test set. No hyperparameter tuning, retraining, or modifications were performed after opening the test set.
+
+### Secondary Duplicate Sensitivity Analysis
+
+Phase 2 identified **15 exact duplicate groups** inside the official Testing split, corresponding to **16 redundant copies** across 30 affected images (deduplicated sensitivity population = 1 584 images).
+
+Sensitivity metrics were computed by filtering the in-memory prediction DataFrame without additional model inference:
+
+| Model | Primary Test Acc (N=1600) | Primary Macro F1 (N=1600) | Dedup Test Acc (N=1584) | Dedup Macro F1 (N=1584) |
+|-------|--------------------------|---------------------------|-------------------------|-------------------------|
+| **Baseline Custom CNN** | 0.85125 | 0.8494955787 | **0.8573232323** | **0.8553429132** |
+| **EfficientNetB0 Transfer** | 0.843125 | 0.8366468062 | 0.8491161616 | 0.8424994628 |
+
+- Primary reported metrics use the full official 1 600-image test set.
+- Sensitivity metrics are strictly secondary and demonstrate that exact duplicates within the testing split did not artificially inflate model performance.
+- No additional inference or dataset reloading was performed for the sensitivity analysis.
+
+### Grad-CAM Explainability
+
+Grad-CAM was generated for the selected **Baseline CNN** targeting layer `block4_conv`.
+To prevent cherry-picking, examples were selected using a deterministic lexicographic sort on filepaths:
+
+- **Correctly Classified (1 per class):**
+  - `correct_glioma.png`: `Te-gl_10.jpg` (confidence: 100.00%)
+  - `correct_meningioma.png`: `Te-aug-me_1.jpg` (confidence: 76.34%)
+  - `correct_notumor.png`: `Te-no_1.jpg` (confidence: 98.76%)
+  - `correct_pituitary.png`: `Te-pi_1.jpg` (confidence: 98.01%)
+- **Misclassified (First 2 lexicographical):**
+  - `misclassified_01.png`: `Te-gl_1.jpg` (true: glioma, pred: notumor, confidence: 45.80%)
+  - `misclassified_02.png`: `Te-gl_101.jpg` (true: glioma, pred: notumor, confidence: 72.57%)
+
+Visualizations are structured as 3-panel figures: `Original MRI | Grad-CAM Heatmap | Overlay`.
+
+> **Disclaimer:** Grad-CAM highlights spatial regions influencing the model's classification decision. It is **NOT** tumour segmentation and does **NOT** prove lesion location. This software is educational/research software only.
+
+### Evaluation Artefacts (`results/final_evaluation/`)
+
+```
+results/final_evaluation/
+├── baseline_metrics.json
+├── efficientnet_metrics.json
+├── baseline_classification_report.csv
+├── efficientnet_classification_report.csv
+├── baseline_predictions.csv
+├── efficientnet_predictions.csv
+├── baseline_confusion_matrix.csv / .png / _normalized.png
+├── efficientnet_confusion_matrix.csv / .png / _normalized.png
+├── model_comparison.csv
+├── model_comparison.json
+├── evaluation_summary.json
+├── duplicate_sensitivity/
+│   ├── baseline_metrics.json
+│   ├── efficientnet_metrics.json
+│   └── comparison.csv
+└── gradcam/
+    ├── correct_glioma.png
+    ├── correct_meningioma.png
+    ├── correct_notumor.png
+    ├── correct_pituitary.png
+    ├── misclassified_01.png
+    ├── misclassified_02.png
+    ├── gradcam_examples.csv
+    └── gradcam_summary.json
+```
+
+### Educational / research disclaimer
+
+This project performs **brain MRI image classification** for educational
+and research purposes only. It is **not** a clinical diagnostic tool,
+has not been clinically validated, and must not be used for medical
+decision-making.
 
 ---
 
