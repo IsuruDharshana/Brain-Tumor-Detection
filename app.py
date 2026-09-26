@@ -146,8 +146,8 @@ def main() -> None:
         return
 
     try:
-        file_bytes = uploaded_file.read()
-        pil_image = Image.open(io.BytesIO(file_bytes))
+        uploaded_bytes = uploaded_file.getvalue()
+        pil_image = Image.open(io.BytesIO(uploaded_bytes))
         pil_image.load()
     except Exception:
         st.error(
@@ -209,7 +209,7 @@ def main() -> None:
 
     with st.spinner("Analyzing the image..."):
         try:
-            preprocessed_tensor = preprocess_image(pil_image)
+            preprocessed_tensor = preprocess_image(uploaded_bytes)
             prediction_result = predict_image(model, preprocessed_tensor)
         except Exception:
             with result_column:

@@ -20,8 +20,10 @@ from typing import Any
 
 import numpy as np
 from PIL import Image
+import tensorflow as tf
 
 from src.config import CLASS_NAMES, IMAGE_HEIGHT, IMAGE_WIDTH
+from src.data.preprocessing import decode_and_preprocess_image_bytes, load_and_preprocess_image
 
 CLASS_DISPLAY_NAMES: dict[str, str] = {
     "glioma": "Glioma",
@@ -161,10 +163,18 @@ def preprocess_image(
 ) -> np.ndarray:
     """Validate and preprocess an input image for model inference.
 
-    Accepts PIL Images, file bytes, BytesIO streams, or file paths.
-    Converts any color mode (L, RGBA, P, etc.) to 3-channel RGB.
-    Resizes using bilinear interpolation to target_size (default 224x224).
-    Normalizes pixel values to [0.0, 1.0] as float32.
+    Uses the exact TensorFlow preprocessing pipeline from Phase 3 to guarantee
+    numerical reproducibility with training and Phase 6 evaluation.
+
+    Accepts file bytes, bytearray, BytesIO streams, file paths, or PIL Images.
+    For bytes / bytearray / BytesIO:
+        Preprocesses original encoded file bytes directly via
+        decode_and_preprocess_image_bytes().
+    For file paths:
+        Preprocesses via load_and_preprocess_image().
+    For PIL Images (supported for testing/internal callers):
+        Converts to uint8 RGB tensor, then applies convert_image_dtype to float32
+        and tf.image.resize using TensorFlow's bilinear interpolation.
 
     Args:
         image_input: image in any supported format.
@@ -175,51 +185,57 @@ def preprocess_image(
         values in [0.0, 1.0].
 
     Raises:
-        ValueError: if image_input cannot be decoded as an image.
+        ValueError: if image_input cannot be decoded or is invalid.
     """
-    # Open PIL Image safely
-    if isinstance(image_input, Image.Image):
-        pil_img = image_input
-    elif isinstance(image_input, (bytes, bytearray)):
+    if isinstance(image_input, (bytes, bytearray, io.BytesIO)):
+        if isinstance(image_input, io.BytesIO):
+            raw_bytes = image_input.getvalue()
+        elif isinstance(image_input, (bytearray, memoryview)):
+            raw_bytes = bytes(image_input)
+        else:
+            raw_bytes = image_input
+
+        if not raw_bytes:
+            raise ValueError("Empty image bytes provided.")
+
         try:
-            pil_img = Image.open(io.BytesIO(image_input))
+            tensor = decode_and_preprocess_image_bytes(raw_bytes)
+            if target_size != (IMAGE_HEIGHT, IMAGE_WIDTH):
+                tensor = tf.image.resize(tensor, [target_size[0], target_size[1]])
+            arr = tensor.numpy() if hasattr(tensor, "numpy") else np.asarray(tensor, dtype=np.float32)
         except Exception as exc:
             raise ValueError(f"Could not decode image from provided bytes: {exc}") from exc
-    elif isinstance(image_input, io.BytesIO):
-        try:
-            pil_img = Image.open(image_input)
-        except Exception as exc:
-            raise ValueError(f"Could not decode image from stream: {exc}") from exc
+
     elif isinstance(image_input, (str, Path)):
         p = Path(image_input)
         if not p.is_file():
             raise ValueError(f"Image file does not exist: {p}")
         try:
-            pil_img = Image.open(p)
+            tensor = load_and_preprocess_image(str(p))
+            if target_size != (IMAGE_HEIGHT, IMAGE_WIDTH):
+                tensor = tf.image.resize(tensor, [target_size[0], target_size[1]])
+            arr = tensor.numpy() if hasattr(tensor, "numpy") else np.asarray(tensor, dtype=np.float32)
         except Exception as exc:
-            raise ValueError(f"Could not open image file {p}: {exc}") from exc
+            raise ValueError(f"Could not load and preprocess image file {p}: {exc}") from exc
+
+    elif isinstance(image_input, Image.Image):
+        if image_input.width < 1 or image_input.height < 1:
+            raise ValueError("Cannot preprocess an empty image.")
+        try:
+            pil_img = image_input
+            if pil_img.mode != "RGB":
+                pil_img = pil_img.convert("RGB")
+            np_img = np.asarray(pil_img, dtype=np.uint8)
+            tf_img = tf.convert_to_tensor(np_img, dtype=tf.uint8)
+            tf_img.set_shape([None, None, 3])
+            tf_img = tf.image.convert_image_dtype(tf_img, tf.float32)
+            tensor = tf.image.resize(tf_img, [target_size[0], target_size[1]])
+            arr = tensor.numpy() if hasattr(tensor, "numpy") else np.asarray(tensor, dtype=np.float32)
+        except Exception as exc:
+            raise ValueError(f"Could not preprocess PIL image: {exc}") from exc
+
     else:
         raise ValueError(f"Unsupported image input type: {type(image_input)}")
-
-    # Force loading of image data to detect truncation or corruption early
-    try:
-        pil_img.load()
-    except Exception as exc:
-        raise ValueError(f"Corrupt or incomplete image data: {exc}") from exc
-
-    # Convert to 3-channel RGB (handles 'L', 'RGBA', 'P', 'CMYK', etc.)
-    if pil_img.mode != "RGB":
-        pil_img = pil_img.convert("RGB")
-
-    # Resize to model input dimensions (224, 224)
-    expected_w, expected_h = target_size[1], target_size[0]
-    if pil_img.size != (expected_w, expected_h):
-        # Image.Resampling.BILINEAR is standard in Pillow 10+
-        resample_filter = getattr(getattr(Image, "Resampling", Image), "BILINEAR", Image.BILINEAR)
-        pil_img = pil_img.resize((expected_w, expected_h), resample=resample_filter)
-
-    # Convert to float32 array in [0, 1]
-    arr = np.asarray(pil_img, dtype=np.float32) / 255.0
 
     # Ensure batch dimension (1, 224, 224, 3)
     if arr.ndim == 3:
