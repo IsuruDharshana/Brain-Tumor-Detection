@@ -15,7 +15,7 @@ Network (CNN) to classify brain MRI scans into tumour categories.
 | 4 | Baseline custom CNN | ✅ Complete |
 | 5 | EfficientNetB0 transfer learning | ✅ Complete |
 | 6 | Final evaluation + model comparison + Grad-CAM | ✅ Complete |
-| 7 | Streamlit application | ⏳ Pending |
+| 7 | Streamlit application | 🚧 In Progress |
 
 ---
 
@@ -511,6 +511,89 @@ This project performs **brain MRI image classification** for educational
 and research purposes only. It is **not** a clinical diagnostic tool,
 has not been clinically validated, and must not be used for medical
 decision-making.
+
+---
+
+## Phase 7 — Streamlit Application
+
+> **Status: 🚧 In Progress**
+
+Phase 7 implements an interactive, local Streamlit web application (`app.py`) for demonstration and educational testing of the final selected model (**Baseline Custom CNN**).
+
+### Features
+
+- **Selected Model:** Loads the selected Baseline CNN (`models/baseline_cnn.keras`) with layer `block4_conv` targeted for Grad-CAM explainability.
+- **Image Upload Flow:** Accepts `.jpg`, `.jpeg`, and `.png` axial brain MRI scans via `st.file_uploader`.
+- **Basic Input Plausibility Check:** Before inference, rejects strongly colourful or effectively blank images using image-level saturation, RGB channel-difference, and intensity-variation heuristics. Rejected images do not reach the CNN or Grad-CAM pipeline.
+- **Deterministic Preprocessing:** Converts any source image (RGB, Grayscale, RGBA, Palette) to 3-channel RGB, resizes to 224 × 224, and scales pixel intensities to `[0.0, 1.0]` float32.
+- **Prediction & Probabilities:** Computes softmax output and displays the top predicted category, confidence percentage, and a full 4-class breakdown (Glioma, Meningioma, No Tumor, Pituitary).
+- **Grad-CAM Visualization:** Generates in-memory 3-panel overlays (`Original MRI | Grad-CAM Heatmap | Overlay`) to highlight spatial regions influencing model decisions.
+- **Privacy & Memory:** All uploads and heatmaps are processed in-memory and are never saved or persisted to disk.
+
+### Input Plausibility Filter Limitations
+
+The input check is a conservative heuristic for blocking obviously unrelated,
+colourful, or blank images. It measures HSV-equivalent saturation, RGB channel
+spread, the proportion of strongly colourful pixels, and grayscale intensity
+variation. Mildly tinted and near-grayscale images are allowed. This filter is
+not an out-of-distribution detector, does not establish that an image contains
+brain anatomy, and cannot verify that an upload is a genuine medical MRI.
+
+Softmax confidence is not used to decide whether an upload is MRI-like.
+
+### Local Run Instructions
+
+To run the web application locally:
+
+```bash
+# Activate virtual environment
+source .venv/bin/activate   # Linux / WSL
+# or: .\.venv\Scripts\Activate.ps1  # Windows
+
+# Launch Streamlit application
+streamlit run app.py
+```
+
+Optional environment variable override:
+```bash
+export BRAIN_TUMOR_MODEL_PATH="models/baseline_cnn.keras"
+```
+
+### Streamlit Community Cloud Deployment Preparation
+
+Because trained model weights are excluded from Git version control, the application dynamically resolves or acquires the model checkpoint (`baseline_cnn.keras`, ~5 MB) at startup.
+
+#### Model Acquisition Order
+
+1. **`BRAIN_TUMOR_MODEL_PATH`**: If set and points to an existing file, the app loads this model directly.
+2. **Local Repository Path**: If `models/baseline_cnn.keras` exists locally, it is used immediately without network requests.
+3. **Automated Download**: If no local model is found and `BRAIN_TUMOR_MODEL_URL` is set, the application downloads the model from the specified URL (e.g., a tagged GitHub Release asset) to `models/baseline_cnn.keras`.
+   - Uses Python's standard library `urllib.request`.
+   - Downloads to a temporary file (`.tmp`) and performs an atomic rename (`os.replace`) only upon complete transfer and validation.
+   - If `BRAIN_TUMOR_MODEL_SHA256` is configured, validates file integrity prior to replacing.
+4. **Fallback & Error Handling**: If the model is not found locally and no URL is provided, or if the download fails, the application gracefully surfaces `"Model is currently unavailable. Please try again later."` in the web UI without exposing raw stack traces.
+
+#### Environment Variables for Deployment
+
+| Variable | Required | Description |
+|---|---|---|
+| `BRAIN_TUMOR_MODEL_URL` | Cloud only | Direct HTTPS URL to download the model asset (e.g., GitHub Releases). |
+| `BRAIN_TUMOR_MODEL_SHA256` | Optional | Expected SHA-256 hex digest for cryptographic integrity verification. |
+| `BRAIN_TUMOR_MODEL_PATH` | Optional | Custom filesystem path override to a local model file. |
+
+#### Cloud Configuration
+
+Server and browser options for Streamlit Community Cloud are configured in `.streamlit/config.toml`:
+- `headless = true`
+- `enableCORS = false`
+- `enableXsrfProtection = true`
+- `gatherUsageStats = false`
+
+No secrets or credentials are hardcoded or tracked in `.streamlit/`.
+
+### Educational / Research Disclaimer
+
+This application is for educational and research purposes only. It is **not** a clinical diagnostic tool and must not be used for medical decision-making or patient diagnosis. Grad-CAM visualisations highlight regions influencing model predictions and do not represent tumour segmentation or prove lesion boundaries.
 
 ---
 
